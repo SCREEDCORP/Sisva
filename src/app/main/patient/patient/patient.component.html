@@ -1,0 +1,824 @@
+<div id="product" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="row" fxLayoutAlign="space-between center">
+
+            <!-- APP TITLE -->
+            <div fxLayout="row" fxLayoutAlign="start center">
+
+                <button mat-icon-button class="mr-0 mr-sm-16" [routerLink]="'/patients'">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <div class="product-image mr-8 mr-sm-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    <img [src]="'assets/images/patient/new-patient.png'" alt="imagen">
+                </div>
+
+                <div fxLayout="column" fxLayoutAlign="start start"
+                    [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    <div class="h2" *ngIf="pageType ==='edit'">
+                        {{patient.pat_basic_info.pat_names}}
+                    </div>
+                    <div class="h2" *ngIf="pageType ==='new'">
+                        Nuevo Paciente
+                    </div>
+                    <div class="subtitle secondary-text">
+                        <span>Información detallada</span>
+                    </div>
+                </div>
+            </div>
+            <!-- / APP TITLE -->
+
+            <button mat-raised-button class="save-product-button" id="btnUpdatePatient"
+                [disabled]="patientForm.invalid || patientForm.pristine" *ngIf="pageType ==='edit'"
+                (click)="updatePatient()">
+                <span>Actualizar</span>
+            </button>
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <!-- CONTENT -->
+            <div class="content">
+
+                <form name="patientForm" [formGroup]="patientForm" class="product w-100-p" fxLayout="column" fxFlex>
+
+                    <mat-tab-group *ngIf="pageType ==='edit'">
+
+                        <mat-tab label="Información básica">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                <mat-form-field appearance="outline" class="w-25-p">
+                                    <mat-label>Tipo de documento</mat-label>
+                                    <mat-select (selectionChange)="changeMaxLengthDocument($event.value)"
+                                        formControlName="pat_tip_doc" required>
+                                        <mat-option *ngFor="let tip of listTipDocument" [value]="tip.tip_doc_id">
+                                            {{tip.tip_doc_name}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El tipo de documento es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-25-p">
+                                    <mat-label>Número de documento</mat-label>
+                                    <input matInput name="pat_num_doc" formControlName="pat_num_doc" required>
+                                    <mat-error>El número de documento es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Nombres</mat-label>
+                                    <input matInput name="pat_names" formControlName="pat_names" required>
+                                    <mat-error>Los nombres son requeridos.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Apellido paterno</mat-label>
+                                    <input matInput name="pat_ape_pat" formControlName="pat_ape_pat" required>
+                                    <mat-error>El apellido paterno son requeridos.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Apellido materno</mat-label>
+                                    <input matInput name="pat_ape_mat" formControlName="pat_ape_mat" required>
+                                    <mat-error>El apellido materno es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-35-p">
+                                    <mat-label>Fecha de nacimiento</mat-label>
+                                    <input matInput [matDatepicker]="pickerBasicUpd" [max]="maxDateFecNac"
+                                        (click)="pickerBasicUpd.open()"
+                                        (dateChange)="calculateEdadPatient($event.target.value)"
+                                        formControlName="pat_fec_nac">
+                                    <mat-datepicker-toggle matSuffix [for]="pickerBasicUpd"></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerBasicUpd startView="multi-year"></mat-datepicker>
+                                    <mat-error>La fecha de nacimiento es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-15-p">
+                                    <mat-label>Edad</mat-label>
+                                    <input matInput name="pat_edad" formControlName="pat_edad" required readonly>
+                                    <mat-error>La edad es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Sexo</mat-label>
+                                    <mat-select formControlName="pat_sexo" required>
+                                        <mat-option *ngFor="let sex of listSex" [value]="sex.sex_id">
+                                            {{sex.sex_desc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El sexo es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <div class="mb-24" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+
+                                    <div class="mat-card mat-elevation-z4 p-24 mr-24" fxLayout="column"
+                                        fxLayoutAlign="start" fxFlex="1 0 auto" name="form">
+
+                                        <div class="h2 mb-24">Información del apoderado</div>
+
+                                        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                            <mat-form-field appearance="outline" class="w-25-p">
+                                                <mat-label>Tipo de documento</mat-label>
+                                                <mat-select (selectionChange)="changeMaxLengthDocument($event.value)"
+                                                    formControlName="pat_apo_tip_doc" required>
+                                                    <mat-option *ngFor="let tip of listTipDocument"
+                                                        [value]="tip.tip_doc_id">
+                                                        {{tip.tip_doc_name}}
+                                                    </mat-option>
+                                                </mat-select>
+                                                <mat-error>El tipo de documento es requerido.</mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field appearance="outline" class="w-25-p">
+                                                <mat-label>Número de documento</mat-label>
+                                                <input matInput name="pat_apo_num_doc" formControlName="pat_apo_num_doc"
+                                                    required>
+                                                <mat-error>El número de documento es requerido.</mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field appearance="outline" class="w-50-p">
+                                                <mat-label>Nombres del apoderado</mat-label>
+                                                <input matInput name="pat_apo_names" formControlName="pat_apo_names"
+                                                    required>
+                                                <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                            </mat-form-field>
+                                        </div>
+
+                                        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                            <mat-form-field appearance="outline" class="w-50-p">
+                                                <mat-label>Apellido paterno del apoderado</mat-label>
+                                                <input matInput name="pat_apo_ape_pat" formControlName="pat_apo_ape_pat"
+                                                    required>
+                                                <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                            </mat-form-field>
+
+                                            <mat-form-field appearance="outline" class="w-50-p">
+                                                <mat-label>Apellido materno del apoderado</mat-label>
+                                                <input matInput name="pat_apo_ape_mat" formControlName="pat_apo_ape_mat"
+                                                    required>
+                                                <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                            </mat-form-field>
+                                        </div>
+
+                                        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                            <mat-form-field appearance="outline" class="w-50-p">
+                                                <mat-label>Número de celular del apoderado</mat-label>
+                                                <input matInput name="pat_apo_phone" formControlName="pat_apo_phone"
+                                                    required>
+                                                <mat-error>Los datos del aporeado son requeridos.</mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+
+                        <mat-tab label="Ubicación del paciente">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-30-p">
+                                    <mat-label class="user-apellidos">Departamento</mat-label>
+                                    <mat-select (selectionChange)="loadUbigeoPrv($event.value)"
+                                        formControlName="pat_ubg_dpt" required>
+                                        <mat-option *ngFor="let dpt of listUbigeoDpt" [value]="dpt.ubg_dpt">
+                                            {{dpt.ubg_dsc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El departamento es requerido.</mat-error>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-30-p">
+                                    <mat-label class="user-apellidos">Provincia</mat-label>
+                                    <mat-select (selectionChange)="loadUbigeoDst($event.value)"
+                                        formControlName="pat_ubg_prv" required>
+                                        <mat-option *ngFor="let prv of listUbigeoPrv" [value]="prv.ubg_prv">
+                                            {{prv.ubg_dsc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>La provincia es requerida.</mat-error>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-30-p">
+                                    <mat-label class="user-apellidos">Distrito</mat-label>
+                                    <mat-select id="pat_ubg_dst-upd" formControlName="pat_ubg_dst" required>
+                                        <mat-option *ngFor="let dst of listUbigeoDst" [value]="dst.ubg_dst">
+                                            {{dst.ubg_dsc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El distrito es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-30-p">
+                                    <mat-label>Latitud</mat-label>
+                                    <input matInput name="pat_latitude" formControlName="pat_latitude"
+                                        (change)="getElevation()">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-30-p">
+                                    <mat-label>Longitud</mat-label>
+                                    <input matInput name="pat_longitude" formControlName="pat_longitude"
+                                        (change)="getElevation()">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-30-p">
+                                    <mat-label>Altitud (msnm)</mat-label>
+                                    <input matInput name="pat_elevation" formControlName="pat_elevation">
+                                </mat-form-field>
+
+                                <agm-map *ngIf="showMapa" [latitude]="patientForm.value.pat_latitude"
+                                    (mapClick)="mapClicked($event)"
+                                    [longitude]="patientForm.value.pat_longitude">
+                                    <agm-marker [latitude]="patientForm.value.pat_latitude"
+                                        [longitude]="patientForm.value.pat_longitude"></agm-marker>
+                                </agm-map>
+
+                                <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 25px;">
+                                    <button (click)="actionGetLocation()" class="mr-8" mat-raised-button type="button"
+                                        color="accent">
+                                        <mat-icon matSuffix>location_on</mat-icon>Solicitar ubicación
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </mat-tab>
+
+                        <mat-tab label="Información médica">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label class="user-apellidos">Condicion inicial</mat-label>
+                                    <input matInput name="pat_weight_id" formControlName="pat_weight_id" readonly>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Número de muestra</mat-label>
+                                    <input matInput name="pat_num_mue" formControlName="pat_num_mue" readonly>
+                                    <mat-error>El número de muestra es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Fecha de muestra</mat-label>
+                                    <input matInput formControlName="pat_fec_mue" readonly>
+                                    <mat-error>La fecha de muestra es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Hematocrito (Hcto)</mat-label>
+                                    <input matInput name="pat_hem" formControlName="pat_hem" readonly>
+                                    <mat-error>La Hemoglobina es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                    <input matInput name="pat_hem_wo_dsct" formControlName="pat_hem_wo_dsct" readonly>
+                                    <mat-error>La hemoglobina sin descuento es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Historia clínica</mat-label>
+                                    <input matInput name="pat_his_cli" formControlName="pat_his_cli" readonly>
+                                    <mat-error>El Historia clínica es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                    <input (input)="calculateStatePatient($event.target.value)" matInput
+                                        name="pat_hem_wi_dsct" formControlName="pat_hem_wi_dsct" readonly>
+                                    <mat-error>La hemoglobina con descuento es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p" *ngIf="show_pat_fec_ini_trt">
+                                    <mat-label>Inicio de tratamiento</mat-label>
+                                    <input matInput formControlName="pat_fec_ini_trt" readonly>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Estado de anemia</mat-label>
+                                    <input matInput name="pat_state" formControlName="pat_state" readonly>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Estado de paciente</mat-label>
+                                    <input matInput name="pat_ane_state" formControlName="pat_ane_state" readonly>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Estación de atención</mat-label>
+                                    <input matInput name="pat_est_salud" formControlName="pat_est_salud" readonly>
+                                    <mat-error>La estación es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p" *ngIf="show_pat_adm_id">
+                                    <mat-label class="user-apellidos">Medicamento</mat-label>
+                                    <input matInput name="pat_adm_id" formControlName="pat_adm_id" readonly>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="w-50-p">
+                                    <mat-label>Observaciones</mat-label>
+                                    <textarea matInput name="pat_obvs" formControlName="pat_obvs" readonly>
+                                     <mat-error>La observacion es requerida.</mat-error>                                        
+                                    </textarea>
+                                </mat-form-field>
+
+                            </div>
+                        </mat-tab>
+
+                    </mat-tab-group>
+
+                    <div *ngIf="pageType ==='new'" class="horizontal-stepper-wrapper">
+
+                        <!-- HORIZONTAL STEPPER EXAMPLE -->
+                        <mat-horizontal-stepper #stepper [linear]="true">
+
+                            <mat-step [editable]="stepperEditable" [stepControl]="basicForm">
+
+                                <form fxLayout="column" [formGroup]="basicForm" (keydown)="keyDownBasicForm($event)">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                    </ng-template>
+
+                                    <div class="h2 mb-24">Información básica</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label class="user-apellidos">Tipo de documento</mat-label>
+                                            <mat-select (selectionChange)="changeMaxLengthDocument($event.value)"
+                                                formControlName="pat_tip_doc" required>
+                                                <mat-option *ngFor="let tip of listTipDocument"
+                                                    [value]="tip.tip_doc_id">
+                                                    {{tip.tip_doc_name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>El tipo de documento es requerido.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label class="user-apellidos">Número de documento</mat-label>
+                                            <input (change)="searchPatientPadron($event)" matInput
+                                                (input)="searchPatientPadron($event)" formControlName="pat_num_doc"
+                                                id="pat_num_doc" required>
+                                            <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                            <mat-error>El número de documento es requerido.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Nombres</mat-label>
+                                            <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                formControlName="pat_names" id="pat_names" required>
+                                            <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                                            <mat-error>Los nombres son requeridos.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Apellido paterno</mat-label>
+                                            <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                formControlName="pat_ape_pat" id="pat_ape_pat" required>
+                                            <mat-error>El apellido paterno es requerido.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Apellido materno</mat-label>
+                                            <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                formControlName="pat_ape_mat" id="pat_ape_mat" required>
+                                            <mat-error>El apellido materno es requerido.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="35" class="pr-4">
+                                            <mat-label>Fecha de nacimiento</mat-label>
+                                            <input matInput [matDatepicker]="picker" [max]="maxDateFecNac"
+                                                (click)="picker.open()"
+                                                (dateChange)="calculateEdadPatient($event.target.value)"
+                                                formControlName="pat_fec_nac">
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha de nacimiento es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="15" class="pr-4">
+                                            <mat-label>Edad</mat-label>
+                                            <input matInput formControlName="pat_edad" id="pat_edad" required readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Sexo</mat-label>
+                                            <mat-select formControlName="pat_sexo" required>
+                                                <mat-option *ngFor="let sex of listSex" [value]="sex.sex_id">
+                                                    {{sex.sex_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>El sexo es requerido.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div class="mb-24" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+
+                                        <div class="mat-card mat-elevation-z4 p-24 mr-24" fxLayout="column"
+                                            fxLayoutAlign="start" fxFlex="1 0 auto" name="form">
+
+                                            <div class="h2 mb-24">Información del apoderado</div>
+
+                                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                                <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                                    <mat-label class="user-apellidos">Tipo de documento apoderado
+                                                    </mat-label>
+                                                    <mat-select
+                                                        (selectionChange)="changeMaxLengthDocument($event.value)"
+                                                        formControlName="pat_apo_tip_doc" required>
+                                                        <mat-option *ngFor="let tip of listTipDocument"
+                                                            [value]="tip.tip_doc_id">
+                                                            {{tip.tip_doc_name}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                    <mat-error>El tipo de documento es requerido.</mat-error>
+                                                </mat-form-field>
+
+                                                <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                                    <mat-label class="user-apellidos">Número de documento apoderado
+                                                    </mat-label>
+                                                    <input matInput formControlName="pat_apo_num_doc"
+                                                        id="pat_apo_num_doc" required>
+                                                    <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                                    <mat-error>El número de documento es requerido.</mat-error>
+                                                </mat-form-field>
+
+                                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                                    <mat-label>Nombres del apoderado</mat-label>
+                                                    <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                        formControlName="pat_apo_names" id="pat_apo_names" required>
+                                                    <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                                </mat-form-field>
+
+                                            </div>
+
+                                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                                    <mat-label>Apellido paterno del apoderado</mat-label>
+                                                    <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                        formControlName="pat_apo_ape_pat" id="pat_apo_ape_pat" required>
+                                                    <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                                </mat-form-field>
+                                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                                    <mat-label>Apellido materno del apoderado</mat-label>
+                                                    <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                        formControlName="pat_apo_ape_mat" id="pat_apo_ape_mat" required>
+                                                    <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                                </mat-form-field>
+
+                                            </div>
+
+                                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                                    <mat-label>Número de celular del apoderado</mat-label>
+                                                    <input (change)="clearWhiteSpacesBasicForm($event)" matInput
+                                                        formControlName="pat_apo_phone" id="pat_apo_phone" required>
+                                                    <mat-error>Los datos del apoderado son requeridos.</mat-error>
+                                                </mat-form-field>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button id="btnFormBasicNext" [disabled]="!basicForm.valid" mat-raised-button
+                                            matStepperNext type="button" color="accent">
+                                            Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step [editable]="stepperEditable" [stepControl]="locationForm">
+
+                                <form fxLayout="column" [formGroup]="locationForm">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">person_pin_circle</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Ubicación del paciente</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center"
+                                        fxFlex="1 0 auto">
+                                        <mat-form-field appearance="outline" fxFlex="100" class="pr-4">
+                                            <mat-label class="user-apellidos">Dirección</mat-label>
+                                            <input id="pat_dire" name="pat_dire" (change)="getElevation()"
+                                                matInput formControlName="pat_dire" required>
+                                            <mat-error>Ingresar una dirección correcta.</mat-error>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                        <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                            <mat-label class="user-apellidos">Departamento</mat-label>
+                                            <mat-select (selectionChange)="loadUbigeoPrv($event.value)"
+                                                formControlName="pat_ubg_dpt" required>
+                                                <mat-option *ngFor="let dpt of listUbigeoDpt" [value]="dpt.ubg_dpt">
+                                                    {{dpt.ubg_dsc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>El departamento es requerido.</mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                            <mat-label class="user-apellidos">Provincia</mat-label>
+                                            <mat-select (selectionChange)="loadUbigeoDst($event.value)"
+                                                formControlName="pat_ubg_prv" required>
+                                                <mat-option *ngFor="let prv of listUbigeoPrv" [value]="prv.ubg_prv">
+                                                    {{prv.ubg_dsc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>La provincia es requerida.</mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                            <mat-label class="user-apellidos">Distrito</mat-label>
+                                            <mat-select (selectionChange)="changeShowLocationMap()" id="pat_ubg_dst-reg"
+                                                formControlName="pat_ubg_dst" required>
+                                                <mat-option *ngFor="let dst of listUbigeoDst" [value]="dst.ubg_dst">
+                                                    {{dst.ubg_dsc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>El distrito es requerido.</mat-error>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div *ngIf="showLocationMap" fxLayout="row" fxLayoutAlign="start center"
+                                        fxFlex="1 0 auto">
+                                        <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                            <mat-label class="user-apellidos">Latitud</mat-label>
+                                            <input id="pat_latitude" name="pat_latitude" (change)="getElevation()"
+                                                matInput formControlName="pat_latitude" required>
+                                            <mat-error>Ingresar una latitud correcta.</mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                            <mat-label class="user-apellidos">Longitud</mat-label>
+                                            <input id="pat_longitude" name="pat_longitude" (change)="getElevation()"
+                                                matInput formControlName="pat_longitude" required>
+                                            <mat-error>Ingresar una longitud correcta.</mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                            <mat-label class="user-apellidos">Altitud (msnm)</mat-label>
+                                            <input id="pat_elevation" name="pat_elevation"
+                                                (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                formControlName="pat_elevation" required>
+                                            <mat-error>La altitud es requerida.</mat-error>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div *ngIf="showLocationMap" fxLayout="row" fxLayoutAlign="center center"
+                                        style="margin-bottom: 25px;">
+                                        <button (click)="actionGetLocation()" class="mr-8" mat-raised-button
+                                            type="button" color="accent">
+                                            <mat-icon matSuffix>location_on</mat-icon>Solicitar ubicación
+                                        </button>
+                                    </div>
+
+                                    <agm-map *ngIf="showMapa && showLocationMap"
+                                        (mapClick)="mapClicked($event)"
+                                        [latitude]="locationForm.value.pat_latitude"
+                                        [longitude]="locationForm.value.pat_longitude" style="margin-bottom: 25px;">
+                                        <agm-marker [latitude]="locationForm.value.pat_latitude"
+                                                    [longitude]="locationForm.value.pat_longitude"></agm-marker>
+                                    </agm-map>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button id="btnLocationFormNext" [disabled]="!locationForm.valid" matStepperNext
+                                            mat-raised-button type="button" color="accent">
+                                            Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step [editable]="stepperEditable" [stepControl]="medicForm">
+
+                                <form fxLayout="column" [formGroup]="medicForm" (keydown)="keyDownMedicForm($event)">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">receipt</mat-icon>
+                                    </ng-template>
+
+                                    <div class="h2 mb-24">Información médica</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Condicion inicial</mat-label>
+                                            <mat-select id="pat_weight_id" formControlName="pat_weight_id" required>
+                                                <mat-option *ngFor="let option of listWeight"
+                                                    [value]="option.pat_weight_id">
+                                                    {{option.pat_weight_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>La opción es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Número de muestra</mat-label>
+                                            <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                formControlName="pat_num_mue" id="pat_num_mue" required>
+                                            <mat-error>El número de muestra es reqeuerido.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Fecha de muestra</mat-label>
+                                            <input matInput [matDatepicker]="pickerMedic" [max]="maxDateFecNac"
+                                                (click)="pickerMedic.open()" formControlName="pat_fec_mue">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerMedic">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerMedic startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha de muestra es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Hematocrito (Hcto)</mat-label>
+                                            <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                formControlName="pat_hem" id="pat_hem" required>
+                                            <mat-error>Hematocrito (Hcto)</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Hemoglobina sin descuento (HSD)
+                                            </mat-label>
+                                            <input (change)="calculateHCD($event)" (input)="calculateHCD($event)"
+                                                matInput formControlName="pat_hem_wo_dsct" id="pat_hem_wo_dsct"
+                                                required>
+                                            <mat-error>La fecha de muestra es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Hemoglobina con descuento (HCD)
+                                            </mat-label>
+                                            <input (change)="clearWhiteSpacesMedicForm($event)"
+                                                (input)="validateHSD($event.target.value)" matInput
+                                                formControlName="pat_hem_wi_dsct" id="pat_hem_wi_dsct" required>
+                                            <mat-error>La hemoglobina con descuento es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Historia clínica</mat-label>
+                                            <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                formControlName="pat_his_cli" id="pat_his_cli" required>
+                                            <mat-error>La historia clinica es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Estado de paciente</mat-label>
+                                            <mat-select id="pat_ane_state" formControlName="pat_ane_state" required>
+                                                <mat-option *ngFor="let option of listAnemState"
+                                                    [value]="option.ane_option">
+                                                    {{option.ane_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>La opción es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4"
+                                            *ngIf="show_pat_fec_ini_trt">
+                                            <mat-label class="user-apellidos">Inicio de tratamiento</mat-label>
+                                            <input matInput [matDatepicker]="pickerTratMedic" [max]="maxDateFecNac"
+                                                (click)="pickerTratMedic.open()" formControlName="pat_fec_ini_trt">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerTratMedic">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerTratMedic startView="multi-year"></mat-datepicker>
+                                            <mat-error>El inicio de tratamiento es requerido.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Estado de anemia</mat-label>
+                                            <input matInput formControlName="pat_state" id="pat_state" readonly>
+                                            <mat-error>La estación de atención es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4"
+                                            *ngIf="show_pat_adm_id">
+                                            <mat-label class="user-apellidos">Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="pat_adm_id" required>
+                                                <mat-option *ngFor="let option of listProdAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error>La opción es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                formControlName="pat_obvs" id="pat_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label class="user-apellidos">Estación de atención</mat-label>
+                                            <input matInput formControlName="pat_est_salud" id="pat_est_salud">
+                                            <mat-error>La hemoglobina con descuento es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center" style="margin-top: 15px;">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button id="btnMedicFormNext" [disabled]="!medicForm.valid" mat-raised-button
+                                            (click)="btnLocationFormNextClick()" type="button" color="accent">
+                                            Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step>
+
+                                <ng-template matStepLabel>
+                                    <mat-icon matSuffix class="secondary-text">check_circle_outline</mat-icon>
+                                </ng-template>
+
+                                <div class="h2 m-16" fxLayout="row" fxLayoutAlign="center center">
+                                    El paciente se registro exitosamente.
+                                </div>
+
+                                <div fxLayout="row" fxLayoutAlign="center center">
+                                    <button mat-raised-button type="button" color="accent" (click)="finalizeRegistry()">
+                                        Finalizar&nbsp;<mat-icon matSuffix>check_circle</mat-icon>
+                                    </button>
+                                </div>
+
+                            </mat-step>
+
+                        </mat-horizontal-stepper>
+                        <!-- / HORIZONTAL STEPPER EXAMPLE -->
+
+                    </div>
+
+                </form>
+
+            </div>
+            <!-- / CONTENT -->
+
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+
+</div>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

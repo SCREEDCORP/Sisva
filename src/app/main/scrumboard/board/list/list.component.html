@@ -1,0 +1,34 @@
+<div class="list mat-elevation-z1" fxLayout="column">
+
+    <!-- LIST HEADER -->
+    <div class="list-header" fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+
+        <scrumboard-board-edit-list-name
+            fxFlex="1 0 auto"
+            [list]="list"
+            (listNameChanged)="onListNameChanged($event)">
+        </scrumboard-board-edit-list-name>
+
+    </div>
+    <!-- / LIST HEADER -->
+
+    <!-- LIST CONTENT -->
+    <div class="list-content" fxLayout="column">
+
+        <div class="list-cards ngx-dnd-container"
+             [model]="list.idCards" ngxDroppable="card" (out)="onDrop($event)"
+             fusePerfectScrollbar #listScroll>
+            <scrumboard-board-card ngxDraggable
+                                   (click)="openCardDialog(cardId)"
+                                   class="scrumboard-board-card ngx-dnd-item"
+                                   *ngFor="let cardId of list.idCards"
+                                   [model]="cardId"
+                                   [cardId]="cardId">
+            </scrumboard-board-card>
+        </div>
+    </div>
+    <!-- / LIST CONTENT -->
+
+</div>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

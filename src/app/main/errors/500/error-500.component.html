@@ -1,0 +1,17 @@
+<div id="error-500" fxLayout="column" fxLayoutAlign="center center">
+
+    <div class="content" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="error-code">500</div>
+
+        <div class="message">Ups, algo salió mal.</div>
+
+        <div class="sub-message">
+            Detalles: {{error}}
+        </div>
+
+        <a class="report-link" [routerLink]="'/apps/dashboards/project'">Reportar este problema.</a>
+
+    </div>
+
+</div>

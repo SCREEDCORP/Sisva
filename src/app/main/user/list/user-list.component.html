@@ -1,0 +1,142 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent"
+             fxLayout="column" fxLayoutAlign="center center"
+             fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0"
+                 fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    group
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Usuarios
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0" style="background-color: white !important;">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon style="color: black !important;">search</mat-icon>
+                    <input #filter placeholder="Buscar un usuario">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+
+            <!-- ADD BUTTON -->
+            <!-- <button mat-raised-button
+                    [routerLink]="'/patients/new'"
+                    class="add-product-button fuse-white mt-24 mt-md-0">
+                <mat-icon style="color: black !important;">group_add</mat-icon> &nbsp;
+                <span>Agregar un usuario</span>
+            </button> -->
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table class="products-table"
+                       #table [dataSource]="dataSource"
+                       matSort
+                       [@animateStagger]="{value:'50'}"
+                       fusePerfectScrollbar>
+
+                <ng-container matColumnDef="user_num_doc">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>DNI</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_pers_info.user_document.user_num_doc}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="user_names">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Nombres</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_pers_info.user_names}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="user_ape_pat">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Ap. Paterno</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_pers_info.user_ape_pat}}</p>
+                    </mat-cell>
+                </ng-container>
+                
+                <!-- Name Column -->
+                <ng-container matColumnDef="user_ape_mat">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Ap. Materno</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_pers_info.user_ape_mat}}</p>
+                    </mat-cell>
+                </ng-container>
+                
+                <!-- Name Column -->
+                <ng-container matColumnDef="user_mail">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_mail}}</p>
+                    </mat-cell>
+                </ng-container>
+                
+                <!-- Name Column -->
+                <ng-container matColumnDef="user_occupation_desc">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Ocupación</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_medic_info.user_occupation_info.user_occupation_desc}}</p>
+                    </mat-cell>
+                </ng-container>
+                
+                <!-- Name Column -->
+                <ng-container matColumnDef="user_mic_red">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Micro Red</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.user_medic_info.user_mic_red}}</p>
+                    </mat-cell>
+                </ng-container>                
+
+                <!-- Active Column -->
+                <ng-container matColumnDef="user_valid">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Activo</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="product.user_valid == '1'" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="product.user_valid == '0'" class="active-icon red-500 s-16">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let product; columns: displayedColumns;"
+                         class="product"
+                         matRipple
+                         (click)="showUserDetails(product.user_id)">
+                </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="dataSource.filteredData.length"
+                           [pageIndex]="0"
+                           [pageSize]="10"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

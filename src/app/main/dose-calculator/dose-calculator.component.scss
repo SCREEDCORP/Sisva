@@ -1,0 +1,31 @@
+:host {
+
+  .content {
+
+      form {
+          width: 100%;
+          max-width: 800px !important;
+      }
+
+      .form-errors-model {
+          flex: 1;
+          code {
+              background: none !important;
+          }
+      }
+  }
+}
+
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+mat-chip {
+  max-width: 200px;
+}

@@ -1,0 +1,60 @@
+<div class="page-layout simple fullwidth" fxLayout="column" fusePerfectScrollbar>
+    <div class="content p-24">
+        <div fxLayout="column" fxLayoutAlign="start start" fxLayout.gt-md="row">        
+            <form fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="formUser"
+                [formGroup]="formUser">
+
+                <div class="h2 mb-24">Información del usuario</div>
+
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Nombres</mat-label>
+                        <input matInput formControlName="user_names" readonly>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Correo electrónico</mat-label>
+                        <input matInput formControlName="user_mail" readonly>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Apellido paterno</mat-label>
+                        <input matInput formControlName="user_ape_pat" readonly>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Apellido materno</mat-label>
+                        <input matInput formControlName="user_ape_mat" readonly>
+                    </mat-form-field>
+
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Número de documento</mat-label>
+                        <input matInput formControlName="user_num_doc" readonly>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Especialización</mat-label>
+                        <input matInput formControlName="user_occupation_desc" readonly>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>Red de salud</mat-label>
+                        <input matInput formControlName="user_red_sal" readonly>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                        <mat-label>N° tareas asignadas</mat-label>
+                        <input matInput formControlName="user_tasks" readonly>
+                    </mat-form-field>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

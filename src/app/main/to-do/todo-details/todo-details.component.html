@@ -1,0 +1,75 @@
+<div *ngIf="!todo" fxLayout="column" fxLayoutAlign="center center" fxFlex>
+    <mat-icon class="s-120 mb-12 select-todo-icon hint-text"
+        [@animate]="{value:'*',params:{delay:'300ms',scale:'0.2'}}">check_box
+    </mat-icon>
+    <span class="hint-text mat-h1 select-todo-text" [@animate]="{value:'*',params:{delay:'400ms'}}">
+        Select a todo
+    </span>
+</div>
+
+<div *ngIf="todo">
+
+    <div class="todo-header" fxLayout="row" fxLayoutAlign="space-between center">
+
+        <button mat-button class="toggle-complete-button" (click)="toggleCompleted($event)"
+            aria-label="Toggle completed" fxFlex="0 1 auto">
+            <mat-icon *ngIf="todo.completed">check_box</mat-icon>
+            <mat-icon *ngIf="!todo.completed">check_box_outline_blank</mat-icon>
+            <span class="ml-8">Marcar como completado</span>
+        </button>
+
+        <div class="actions" fxLayout="row" fxLayoutAlign="start center">
+
+            <button mat-icon-button (click)="toggleDeleted($event)" aria-label="Toggle delete"
+                matTooltip="Eliminar esta tarea">
+                <mat-icon class="secondary-text" *ngIf="todo.deleted">delete_forever</mat-icon>
+                <mat-icon class="secondary-text" *ngIf="!todo.deleted">delete</mat-icon>
+            </button>
+
+        </div>
+    </div>
+
+    <div class="todo-content">
+
+        <form [formGroup]="todoForm" (submit)="addTodo()">
+
+            <div class="tags mb-24" fxFlexFill fxLayout="row wrap">
+                <div class="tag" fxLayout="row" fxLayoutAlign="start center" *ngFor="let tagId of todo.tags">
+                    <div class="tag-color" [ngStyle]="{'background-color': tags | getById:tagId:'color'}"></div>
+                    <div class="tag-label">{{tags | getById:tagId:'title'}}</div>
+                </div>
+            </div>
+
+            <mat-form-field appearance="outline" class="title mt-8" fxFill>
+                <mat-label>Title</mat-label>
+                <textarea matInput #titleInput name="title" formControlName="title" readonly>
+                </textarea>
+            </mat-form-field>
+
+            <div class="dates" fxFlexFill fxLayout="column" fxLayout.gt-xs="row">
+
+                <mat-form-field appearance="outline" class="mr-sm-12" fxFlex>
+                    <mat-label>Fecha de inicio</mat-label>
+                    <input matInput value="{{todoForm.value.startDate | date: 'EEEE, dd'}} de {{todoForm.value.startDate | date: 'MMMM'}} del {{todoForm.value.startDate | date: 'y'}}" readonly>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="ml-sm-12" fxFlex>
+                    <mat-label>Fecha de vencimiento</mat-label>                    
+                    <input matInput value="{{todoForm.value.dueDate | date: 'EEEE, dd'}} de {{todoForm.value.dueDate | date: 'MMMM'}} del {{todoForm.value.dueDate | date: 'y'}}" readonly>
+                </mat-form-field>
+
+            </div>
+
+            <mat-form-field appearance="outline" fxFill>
+                <mat-label>Notas</mat-label>
+                <textarea matInput #notes readonly name="notes" formControlName="notes" maxlength="500">
+                </textarea>
+            </mat-form-field>
+
+            <button *ngIf="formType === 'new'" mat-raised-button color="accent" [disabled]="todoForm.invalid">
+                SAVE
+            </button>
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,134 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <div class="top-bg accent"></div>
+
+    <div class="center">
+
+        <div class="header accent"
+             fxLayout="column" fxLayoutAlign="center center"
+             fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-between center">
+
+            <div class="logo mb-24 mb-md-0"
+                 fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    assignment
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Seguimiento de pacientes
+                </span>
+            </div>
+
+            <div class="search-wrapper mx-32 mx-md-0" style="background-color: white !important;">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon style="color: black !important;">search</mat-icon>
+                    <input #filter placeholder="Buscar un paciente">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="content-card">
+
+            <mat-table class="products-table"
+                       #table [dataSource]="dataSource"
+                       matSort
+                       [@animateStagger]="{value:'50'}"
+                       fusePerfectScrollbar>
+
+                <ng-container matColumnDef="pat_num_doc">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>DNI</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.pat_num_doc}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pat_familia">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Apellidos</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
+                        <p class="text-truncate">
+                            {{product.pat_familia}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pat_names">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Nombres</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.pat_names}}</p>
+                    </mat-cell>
+                </ng-container>
+                
+                <ng-container matColumnDef="pat_sexo">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Sexo</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="text-truncate">
+                            {{product.pat_sexo}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+                
+                <ng-container matColumnDef="pat_historia">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Historia</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="text-truncate">
+                            {{product.pat_historia}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pat_comunidad">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Comunidad</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="text-truncate">
+                            {{product.pat_comunidad}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pat_schedule_trc">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-md>Seguimientos</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
+                        <mat-chip-list *ngIf="product.pat_schedule_trc.length > 0">          
+                            <mat-chip *ngFor="let item of product.pat_schedule_trc; let i = index" [ngClass]="'schedule_trc_ejec_' + item.schedule_ejec" selected>{{i + 1}}</mat-chip>                                                                    
+                        </mat-chip-list>
+                        <p *ngIf="product.pat_schedule_trc.length < 1">Sin desnutrición</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="pat_fec_nac">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Estado de nutrición</mat-header-cell>
+                        <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                            <p class="text-truncate">
+                                Desnutrición crónica leve
+                            </p>
+                        </mat-cell>
+                    </ng-container>
+
+                <ng-container matColumnDef="pat_active">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Activo</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="product.pat_status" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="!product.pat_status" class="active-icon red-500 s-16">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let product; columns: displayedColumns;"
+                         class="product"
+                         matRipple
+                         [routerLink]="'/tracing-dci/'+product.pat_id+'/'+product.pat_handle">
+                </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="dataSource.filteredData.length"
+                           [pageIndex]="0"
+                           [pageSize]="10"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,307 @@
+<div class="page-layout carded fullwidth tabbed inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- CONTENT HEADER -->
+        <div class="header accent p-24" fxLayout="row" fxLayoutAlign="start center">
+            <h1 class="m-0">Esquema de tratamiento</h1>
+        </div>
+        <!-- / CONTENT HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <!-- CONTENT -->
+            <div class="content">
+
+                <mat-tab-group [selectedIndex]="selectedIndex">
+
+                    <mat-tab label="Productos para el tratamiento">
+                        <div class="tab-content p-24" fusePerfectScrollbar>
+                            <div class="demo-content line-height-1.75">
+                                <h2 class="m-0">Contenido de Hierro Elemental de los Productos Farmaceuticos existentes
+                                    en PNUME</h2>
+                                <mat-grid-list cols="3" style="margin-top: 20px;" rowHeight="50px">
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Presentación</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Producto</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Contenido de hierro elemental</h3>
+                                    </mat-grid-tile>
+                                    <!-- 1 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="first-column">
+                                        <h3>Gotas</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Sulfato Ferroso</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Complejo Polimaltosado Férrico </h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>1 Gota = 1,25 mg hierro elemental</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>1 Gota = 2,5 mg hierro elemental</h3>
+                                    </mat-grid-tile>
+                                    <!-- 2 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="first-column">
+                                        <h3>Jarabe</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Sulfato Ferroso</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Complejo Polimaltosado Férrico </h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>1ml = 3mg de hierro elemental</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>1ml = 10mg de hierro elemental</h3>
+                                    </mat-grid-tile>
+                                    <!-- 3 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="first-column">
+                                        <h3>Tabletas</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Sulfato Ferroso</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3> Polimaltosado </h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>60 mg de hierro elemental</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>100 mg de hierro elemental</h3>
+                                    </mat-grid-tile>
+
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="first-column">
+                                        <h3>Polvo</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="body">
+                                        <h3>Micronutrientes</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="body">
+                                        <h3 style="font-size: 12px; line-height: 1.6;">
+                                            Hierro(12.5 de hierro elemental) <br />
+                                            Zing (5mg) <br />
+                                            Acido Fólico (160ug) <br />
+                                            Vitamina A (300 ug Retinol equivalente) <br />
+                                            Vitamina C (30 mg)
+                                        </h3>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="Suplementación con hierro">
+                        <div class="tab-content p-24" fusePerfectScrollbar>
+                            <div class="demo-content line-height-1.75">
+
+                                <h2 class="m-0">Suplementación Preventiva con Hierro y Micronutrientes para Niños
+                                    Menores a 6 meses </h2>
+                                <mat-grid-list cols="5" style="margin-top: 20px;" rowHeight="50px">
+                                    <!-- 0 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Condición del niño</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Edad de administración</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Dosis (vía oral)</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Productos a utilizar</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Duración</h3>
+                                    </mat-grid-tile>
+                                    <!-- 1 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="first-column">
+                                        <h3>Niños con bajo peso al nacer o prematuros</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Desde los 30 días hasta los 36 meses</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>2 Mg/Kg/ Día</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Gotas sulfato ferrosoo gotas complejo polimaltosado férrico</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Suplementación Diaria hasta los 6 meses cumplidos</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Desde los 6 meses de edad</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>1 Sobre diario</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Micronutrientes: Sobre de 1 gramo en polvo</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Hasta que complete el consumo de 360 sobres</h3>
+                                    </mat-grid-tile>
+
+                                    <!-- 2 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="2" class="first-column">
+                                        <h3>Niños nacidos a termino, con adecuado peso al nacer</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Desde los 4 meses de edad hasta los 6 meses</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>2 Mg/Kg/ Día</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Gotas sulfato ferrosoo gotas complejo polimaltosado férrico</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Suplementación Diaria hasta los 6 meses cumplidos </h3>
+                                    </mat-grid-tile>
+
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Desde los 6 meses de edad</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>1 Sobre diario</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Micronutrientes*: Sobre de 1 gramo en polvo</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Hasta que complete el consumo de 360 sobres</h3>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                                <h4>* Si el ESS no cuenta con Micronutrientes podrá seguir usando gotas o jarabe según
+                                    el peso corporal</h4>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="Tratamiento para prematirus y bajo peso">
+                        <div class="tab-content p-24" fusePerfectScrollbar>
+                            <div class="demo-content line-height-1.75">
+
+                                <h2 class="m-0">Tratamiento para niños prematuros y/o bajo peso al nacer menores de 6
+                                    meses de edad con anemia ( 13, 42 )</h2>
+                                <mat-grid-list cols="6" style="margin-top: 20px;" rowHeight="70px">
+                                    <!-- 0 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Condición</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Edad de administración</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Dosis 2 (vía oral)</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Productos</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Duración</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Control de hemoglobina</h3>
+                                    </mat-grid-tile>
+                                    <!-- 1 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="first-column">
+                                        <h3 style="font-size: 12px;">Niño prematuro y/o con bajo peso al nacer</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Desde los 30 días de edad</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>4 Mg/Kg/ Día</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Gotas de Sulfato Ferroso o Gotas de Complejo Polimaltosado Férrico</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Durante 6 meses continuos</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>A los 3 meses y 6 meses de iniciado el tratamiento</h3>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="Tratamiento a termino y buen peso">
+                        <div class="tab-content p-24" fusePerfectScrollbar>
+                            <div class="demo-content line-height-1.75">
+
+                                <h2 class="m-0">Tratamiento con hiero para niños nacidos a término y/o con buen peso al
+                                    nacer menores de 6 mese con anemia</h2>
+                                <mat-grid-list cols="6" style="margin-top: 20px;" rowHeight="70px">
+                                    <!-- 0 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Condición</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Edad de administración</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Dosis 3 (vía oral)</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Productos</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Duración</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="header">
+                                        <h3>Control de hemoglobina</h3>
+                                    </mat-grid-tile>
+                                    <!-- 1 -->
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="first-column">
+                                        <h3 style="font-size: 12px;">Niño a término y con adecuado peso al nacer</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Cuando se diagnostique anemia (a los 4 meses o en el control)</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>3 Mg/Kg/ Día <br/> Máxima dosis 40 Mg al día</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Gotas de Sulfato Ferroso o Gotas de Complejo Polimaltosado Férrico</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Durante 6 meses continuos</h3>
+                                    </mat-grid-tile>
+                                    <mat-grid-tile [colspan]="1" [rowspan]="1" class="body">
+                                        <h3>Al mes, a los 3 meses y 6 meses de iniciado el tratamiento</h3>
+                                    </mat-grid-tile>
+                                </mat-grid-list>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                </mat-tab-group>
+
+            </div>
+            <!-- / CONTENT -->
+
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+
+</div>

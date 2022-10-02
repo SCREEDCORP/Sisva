@@ -1,0 +1,87 @@
+<div id="academy-courses" class="page-layout simple">
+
+        <!-- HEADER -->
+        <div class="header accent p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+    
+            <div class="hero-text">
+                <mat-icon class="hero-icon">school</mat-icon>
+                <h1 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                    Reportes de anemia
+                </h1>
+                <h3 [@animate]="{value:'*',params:{delay:'100ms', y:'25px'}}">
+                    En el siguiente mapa podrás ver los pacientes registrados.
+                </h3>
+            </div>
+    
+        </div>
+        <!-- / HEADER -->
+    
+        <!-- CONTENT -->
+        <div class="content p-24">
+    
+            <div fxLayout="column" fxLayoutAlign="center">
+    
+                <div class="filters" fxLayout="column" fxLayoutAlign="center center"
+                     fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
+    
+                     <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                        <mat-label class="user-apellidos">Departamento</mat-label>
+                        <mat-select [value]="valueDpt" (selectionChange)="loadUbigeoPrv($event.value)">
+                            <mat-option *ngFor="let dpt of listUbigeoDpt" [value]="dpt.ubg_dpt">
+                                {{dpt.ubg_dsc}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>El departamento es requerido.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                        <mat-label class="user-apellidos">Provincia</mat-label>
+                        <mat-select [value]="valuePrv" (selectionChange)="loadUbigeoDst($event.value)">
+                            <mat-option *ngFor="let prv of listUbigeoPrv" [value]="prv.ubg_prv">
+                                {{prv.ubg_dsc}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>La provincia es requerida.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                        <mat-label class="user-apellidos">Distrito</mat-label>
+                        <mat-select [value]="valueDts" (selectionChange)="loadPatientsDst($event.value)">
+                            <mat-option *ngFor="let dst of listUbigeoDst" [value]="dst.ubg_dst">
+                                {{dst.ubg_dsc}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>El distrito es requerido.</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <agm-map *ngIf="showMapa"
+                    [latitude]="lat"
+                    [longitude]="lng"
+                    [zoom]="zoom"
+                    [disableDefaultUI]="false"
+                    [zoomControl]="false">
+                
+                    <agm-marker 
+                        *ngFor="let m of markers; let i = index"
+                        (markerClick)="clickedMarker(m.label, i)"
+                        [latitude]="m.lat"
+                        [longitude]="m.lng"                        
+                        [markerDraggable]="m.draggable"   
+                        [iconUrl]="m.iconUrl"                     
+                        (dragEnd)="markerDragEnd(m, $event)">                        
+                        <agm-info-window>
+                            <a [innerHTML]="m.navigateUrl" (click)="navigateToPatientDetails(m.pat_id)"></a>
+                            <div [innerHTML]="m.infoWindow"></div>
+                        </agm-info-window>
+                    
+                    </agm-marker>                
+                
+                </agm-map>
+
+            </div>
+    
+        </div>
+        <!-- / CONTENT -->
+    
+    </div>
+    
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

@@ -1,0 +1,1324 @@
+<div id="product" class="page-layout carded fullwidth inner-scroll">
+
+    <div class="top-bg accent"></div>
+
+    <div class="center">
+
+        <div class="header accent" fxLayout="row" fxLayoutAlign="space-between center">
+
+            <div fxLayout="row" fxLayoutAlign="start center">
+
+                <button mat-icon-button class="mr-0 mr-sm-16" [routerLink]="'/tracing-ges/type/ges'">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <div class="product-image mr-8 mr-sm-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    <mat-icon style="font-size: 56px;">pregnant_woman</mat-icon>
+                </div>
+
+                <div fxLayout="column" fxLayoutAlign="start start"
+                    [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    <div class="h2" *ngIf="pageType ==='edit'">
+                        {{patient.pat_basic_info.pat_names}}
+                    </div>
+                    <div class="h2" *ngIf="pageType ==='new'">
+                        {{patient.pat_basic_info.pat_names}} - Registro del {{currentTracingText}} seguimiento
+                    </div>
+                    <div class="subtitle primary-text" *ngIf="pageType ==='new'">
+                        <span>Información del seguimiento</span>
+                    </div>
+                    <div class="subtitle primary-text" *ngIf="pageType ==='edit'">
+                        <span>Información de los seguimientos realizados</span>
+                    </div>
+                </div>
+
+                <button style="margin-left: 20px;" mat-raised-button class="save-product-button"
+                    *ngIf="pageType ==='edit' && currentTracing.schedule_ejec === '0'" (click)="btnRegistryTracing()">
+                    <mat-icon>assignment</mat-icon><span>&nbsp;Registrar seguimiento</span>
+                </button>
+            </div>
+
+            <button mat-raised-button class="save-product-button" id="btnUpdatePatient" [disabled]=" tracing1Form.invalid || 
+                             tracing2Form.invalid || 
+                             tracing3Form.invalid || 
+                             tracing4Form.invalid || 
+                             tracing5Form.invalid || 
+                             tracing6Form.invalid" *ngIf="pageType ==='edit' && arrayTracing.length > 0"
+                (click)="updateTracingArray()">
+                <span>Actualizar</span>
+            </button>
+        </div>
+
+        <div class="content-card">
+
+            <div class="content">
+                <form name="patientForm" [formGroup]="patientForm" class="product w-100-p" fxLayout="column" fxFlex>
+
+                    <mat-tab-group *ngIf="pageType ==='edit'">
+
+                        <mat-tab *ngIf="showTracing1Form" label="Seguimiento 1">
+                            <form [formGroup]="tracing1Form">
+                                <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Inicio de tratamiento</mat-label>
+                                        <input matInput [matDatepicker]="pickerIniTrat" (click)="pickerIniTrat.open()"
+                                            formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                            [readonly]="roleAdminReadonly">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerIniTrat">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerIniTrat startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha inicio de tratamiento es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Segunda entrega</mat-label>
+                                        <input matInput [matDatepicker]="pickerNextTracing"
+                                            (click)="pickerNextTracing.open()" [readonly]="roleAdminReadonly"
+                                            formControlName="trc_next_tracing">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <div class="mb-24" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+
+                                        <div class="mat-card mat-elevation-z4 p-24 mr-24" fxLayout="column"
+                                            fxLayoutAlign="start" fxFlex="1 0 auto" name="form">
+
+                                            <div class="h2 mb-24">Paridad</div>
+
+                                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                                <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                                    <mat-label>Gestación</mat-label>
+                                                    <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                        formControlName="pat_ges" id="pat_ges" required>
+                                                    <mat-error>El número de muestra es reqeuerido.</mat-error>
+                                                </mat-form-field>
+
+                                                <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                                    <mat-label>Paridad</mat-label>
+                                                    <input maxlength="1" type="number"
+                                                        (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                                        formControlName="pat_paridad" id="pat_paridad" required>
+                                                    <mat-error>El número de muestra es reqeuerido.</mat-error>
+                                                </mat-form-field>
+
+                                                <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                                    <mat-label>Fecha de última regla (FUR)</mat-label>
+                                                    <input id="pat_fur" matInput
+                                                        (change)="clearWhiteSpacesMedicForm($event)"
+                                                        (dateChange)="calculateEdadGestacional($event.target.value, tracing1Form)"
+                                                        formControlName="pat_fur" [matDatepicker]="pickerMedicFur"
+                                                        (click)="pickerMedicFur.open()" [max]="maxDateFecNac" required>
+                                                    <mat-datepicker-toggle matSuffix [for]="pickerMedicFur">
+                                                    </mat-datepicker-toggle>
+                                                    <mat-datepicker #pickerMedicFur startView="multi-year">
+                                                    </mat-datepicker>
+                                                    <span style="font-size: 11px;">Edad
+                                                        gestacional: {{tracing1Form.value.edadGestacional}}</span>
+                                                    <mat-error>El número de muestra es reqeuerido.</mat-error>
+                                                </mat-form-field>
+
+                                                <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                                    <mat-label>Fecha probable de parto (FPP)</mat-label>
+                                                    <input id="pat_fpp" matInput
+                                                        (change)="clearWhiteSpacesMedicForm($event)"
+                                                        formControlName="pat_fpp" [matDatepicker]="pickerMedicFpp"
+                                                        (click)="pickerMedicFpp.open()" required>
+                                                    <mat-datepicker-toggle matSuffix [for]="pickerMedicFpp">
+                                                    </mat-datepicker-toggle>
+                                                    <mat-datepicker #pickerMedicFpp startView="multi-year">
+                                                    </mat-datepicker>
+
+                                                    <mat-error>El número de muestra es reqeuerido.</mat-error>
+                                                </mat-form-field>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Número de muestra</mat-label>
+                                        <input matInput formControlName="trc_num_mue" id="trc_num_mue"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Fecha de muestra</mat-label>
+                                        <input matInput [matDatepicker]="pickerFecMue" [max]="maxDateFecNac"
+                                            [readonly]="roleAdminReadonly" (click)="pickerFecMue.open()"
+                                            formControlName="trc_fec_mue">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerFecMue">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerFecMue startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha de muestra es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Hematocrito (Hcto)</mat-label>
+                                        <input matInput formControlName="trc_hem" id="trc_hem"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Historia clínica</mat-label>
+                                        <input matInput formControlName="tr_pat_his_cli" id="tr_pat_his_cli"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estación de atención</mat-label>
+                                        <input matInput formControlName="trc_pat_est_salud" id="trc_pat_est_salud"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Medicamento</mat-label>
+                                        <mat-select id="pat_adm_id" formControlName="trc_med_id">
+                                            <mat-option *ngFor="let option of listProductAdm"
+                                                [value]="option.pat_adm_id">
+                                                {{option.pat_adm_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                        <input matInput formControlName="trc_hsd" id="trc_hsd"
+                                            (input)="calculateHCD($event, tracing1Form.value)"
+                                            (change)="calculateHCD($event, tracing1Form.value)"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                        <input (input)="validateHSD($event.target.value, tracing1Form.value)" matInput
+                                            formControlName="trc_hcd" id="trc_hcd" [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estado de paciente</mat-label>
+                                        <mat-select id="trc_ane_state" formControlName="trc_ane_state">
+                                            <mat-option *ngFor="let option of listAnemState"
+                                                [value]="option.ane_option">
+                                                {{option.ane_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estado de anemia</mat-label>
+                                        <input matInput formControlName="trc_state" id="trc_state"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Observaciones</mat-label>
+                                        <textarea matInput formControlName="trc_obvs" id="trc_obvs"
+                                            [readonly]="roleAdminReadonly"></textarea>
+                                    </mat-form-field>
+
+
+                                </div>
+                            </form>
+
+                        </mat-tab>
+
+                        <mat-tab *ngIf="showTracing2Form" label="Seguimiento 2">
+                            <form [formGroup]="tracing2Form">
+                                <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Inicio de tratamiento</mat-label>
+                                        <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Tercera entrega</mat-label>
+                                        <input matInput [matDatepicker]="pickerNextTracing"
+                                            [readonly]="roleAdminReadonly" (click)="pickerNextTracing.open()"
+                                            formControlName="trc_next_tracing">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Medicamento</mat-label>
+                                        <mat-select id="pat_adm_id" formControlName="trc_med_id">
+                                            <mat-option *ngFor="let option of listProductAdm"
+                                                [value]="option.pat_adm_id">
+                                                {{option.pat_adm_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_tol_trt">
+                                        Tolerancia al medicamento</mat-slide-toggle>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_vst_med">Visita
+                                        domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Observaciones</mat-label>
+                                        <textarea matInput formControlName="trc_obvs" id="trc_obvs"
+                                            [readonly]="roleAdminReadonly"></textarea>
+                                    </mat-form-field>
+
+                                </div>
+                            </form>
+
+                        </mat-tab>
+
+                        <mat-tab *ngIf="showTracing3Form" label="Seguimiento 3">
+                            <form [formGroup]="tracing3Form">
+                                <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Inicio de tratamiento</mat-label>
+                                        <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Cuarta entrega</mat-label>
+                                        <input matInput [matDatepicker]="pickerNextTracing"
+                                            [readonly]="roleAdminReadonly" (click)="pickerNextTracing.open()"
+                                            formControlName="trc_next_tracing">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Número de muestra</mat-label>
+                                        <input matInput formControlName="trc_num_mue" id="trc_num_mue"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Fecha de muestra</mat-label>
+                                        <input matInput [matDatepicker]="pickerFecMue" [max]="maxDateFecNac"
+                                            [readonly]="roleAdminReadonly" (click)="pickerFecMue.open()"
+                                            formControlName="trc_fec_mue">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerFecMue">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerFecMue startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha de muestra es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Hematocrito (Hcto)</mat-label>
+                                        <input matInput formControlName="trc_hem" id="trc_hem"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                        <input matInput formControlName="trc_hsd" id="trc_hsd"
+                                            (input)="calculateHCD($event, tracing3Form.value)"
+                                            (change)="calculateHCD($event, tracing3Form.value)"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Medicamento</mat-label>
+                                        <mat-select id="pat_adm_id" formControlName="trc_med_id">
+                                            <mat-option *ngFor="let option of listProductAdm"
+                                                [value]="option.pat_adm_id">
+                                                {{option.pat_adm_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                        <input (input)="validateHSD($event.target.value, tracing3Form.value)" matInput
+                                            formControlName="trc_hcd" id="trc_hcd" [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_tol_trt">
+                                        Tolerancia al medicamento</mat-slide-toggle>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_vst_med">Visita
+                                        domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estado de anemia</mat-label>
+                                        <input matInput formControlName="trc_state" id="trc_state"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estado de paciente</mat-label>
+                                        <mat-select id="trc_ane_state" formControlName="trc_ane_state">
+                                            <mat-option *ngFor="let option of listAnemState"
+                                                [value]="option.ane_option">
+                                                {{option.ane_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Observaciones</mat-label>
+                                        <textarea matInput formControlName="trc_obvs" id="trc_obvs"
+                                            [readonly]="roleAdminReadonly"></textarea>
+                                    </mat-form-field>
+
+                                </div>
+                            </form>
+
+                        </mat-tab>
+
+                        <mat-tab *ngIf="showTracing4Form" label="Seguimiento 4">
+                            <form [formGroup]="tracing4Form">
+                                <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Inicio de tratamiento</mat-label>
+                                        <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Quinta entrega</mat-label>
+                                        <input matInput [matDatepicker]="pickerNextTracing"
+                                            [readonly]="roleAdminReadonly" (click)="pickerNextTracing.open()"
+                                            formControlName="trc_next_tracing">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Medicamento</mat-label>
+                                        <mat-select id="pat_adm_id" formControlName="trc_med_id">
+                                            <mat-option *ngFor="let option of listProductAdm"
+                                                [value]="option.pat_adm_id">
+                                                {{option.pat_adm_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_tol_trt">
+                                        Tolerancia al medicamento</mat-slide-toggle>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_vst_med">Visita
+                                        domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Observaciones</mat-label>
+                                        <textarea matInput formControlName="trc_obvs" id="trc_obvs"
+                                            [readonly]="roleAdminReadonly"></textarea>
+                                    </mat-form-field>
+
+
+                                </div>
+                            </form>
+
+                        </mat-tab>
+
+                        <mat-tab *ngIf="showTracing5Form" label="Seguimiento 5">
+                            <form [formGroup]="tracing5Form">
+                                <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Inicio de tratamiento</mat-label>
+                                        <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Sexta entrega</mat-label>
+                                        <input matInput [matDatepicker]="pickerNextTracing"
+                                            [readonly]="roleAdminReadonly" (click)="pickerNextTracing.open()"
+                                            formControlName="trc_next_tracing">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Medicamento</mat-label>
+                                        <mat-select id="pat_adm_id" formControlName="trc_med_id">
+                                            <mat-option *ngFor="let option of listProductAdm"
+                                                [value]="option.pat_adm_id">
+                                                {{option.pat_adm_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_tol_trt">
+                                        Tolerancia al medicamento</mat-slide-toggle>
+
+                                    <mat-slide-toggle class="w-25-p" formControlName="trc_vst_med">Visita
+                                        domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Observaciones</mat-label>
+                                        <textarea matInput formControlName="trc_obvs" id="trc_obvs"
+                                            [readonly]="roleAdminReadonly"></textarea>
+                                    </mat-form-field>
+
+
+                                </div>
+                            </form>
+
+                        </mat-tab>
+
+                        <mat-tab *ngIf="showTracing6Form" label="Seguimiento 6">
+                            <form [formGroup]="tracing6Form">
+                                <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Inicio de tratamiento</mat-label>
+                                        <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Fin de tratamiento</mat-label>
+                                        <input matInput [matDatepicker]="pickerNextTracing"
+                                            [readonly]="roleAdminReadonly" (click)="pickerNextTracing.open()"
+                                            formControlName="trc_fec_fin_fin">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Número de muestra</mat-label>
+                                        <input matInput formControlName="trc_num_mue" id="trc_num_mue"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-25-p">
+                                        <mat-label>Fecha de muestra</mat-label>
+                                        <input matInput [matDatepicker]="pickerFecMue" [max]="maxDateFecNac"
+                                            [readonly]="roleAdminReadonly" (click)="pickerFecMue.open()"
+                                            formControlName="trc_fec_mue">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerFecMue">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #pickerFecMue startView="multi-year"></mat-datepicker>
+                                        <mat-error>La fecha de muestra es requerida.</mat-error>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Hematocrito (Hcto)</mat-label>
+                                        <input matInput formControlName="trc_hem" id="trc_hem"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                        <input matInput formControlName="trc_hsd" id="trc_hsd"
+                                            (input)="calculateHCD($event, tracing6Form.value)"
+                                            (change)="calculateHCD($event, tracing6Form.value)"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Medicamento</mat-label>
+                                        <mat-select id="pat_adm_id" formControlName="trc_med_id">
+                                            <mat-option *ngFor="let option of listProductAdm"
+                                                [value]="option.pat_adm_id">
+                                                {{option.pat_adm_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                        <input (input)="validateHSD($event.target.value, tracing6Form.value)" matInput
+                                            formControlName="trc_hcd" id="trc_hcd" [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estación de atención</mat-label>
+                                        <input matInput formControlName="trc_est_ate" id="trc_est_ate"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estado de anemia</mat-label>
+                                        <input matInput formControlName="trc_state" id="trc_state"
+                                            [readonly]="roleAdminReadonly">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Estado de paciente</mat-label>
+                                        <mat-select id="trc_ane_state" formControlName="trc_ane_state">
+                                            <mat-option *ngFor="let option of listAnemState"
+                                                [value]="option.ane_option">
+                                                {{option.ane_desc}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" class="w-50-p">
+                                        <mat-label>Observaciones</mat-label>
+                                        <textarea matInput formControlName="trc_obvs" id="trc_obvs"
+                                            [readonly]="roleAdminReadonly"></textarea>
+                                    </mat-form-field>
+
+                                </div>
+                            </form>
+
+                        </mat-tab>
+
+                    </mat-tab-group>
+
+                    <div *ngIf="pageType ==='new'" class="horizontal-stepper-wrapper">
+
+                        <mat-horizontal-stepper #stepper [linear]="true" class="no-header-event">
+
+                            <mat-step [stepControl]="resumeForm">
+
+                                <form fxLayout="column" [formGroup]="resumeForm">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                    </ng-template>
+
+                                    <div class="h2 mb-24">Información resumida del paciente</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Tipo de documento</mat-label>
+                                            <input matInput formControlName="pat_tip_doc" id="pat_tip_doc" readonly>
+                                            <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Número de documento</mat-label>
+                                            <input matInput formControlName="pat_num_doc" id="pat_num_doc" readonly>
+                                            <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Nombres</mat-label>
+                                            <input matInput formControlName="pat_names" id="pat_names" readonly>
+                                            <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Apellido paterno</mat-label>
+                                            <input matInput formControlName="pat_ape_pat" id="pat_ape_pat" readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Apellido materno</mat-label>
+                                            <input matInput formControlName="pat_ape_mat" id="pat_ape_mat" readonly>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                        <mat-form-field appearance="outline" fxFlex="35" class="pr-4">
+                                            <mat-label>Fecha de nacimiento</mat-label>
+                                            <input matInput formControlName="pat_fec_nac" id="pat_fec_nac" readonly>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="15" class="pr-4">
+                                            <mat-label>Edad</mat-label>
+                                            <input matInput formControlName="pat_edad" id="pat_edad" readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Sexo</mat-label>
+                                            <input matInput formControlName="pat_sexo" id="pat_sexo" readonly>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Dirección</mat-label>
+                                            <input matInput formControlName="pat_dire" id="pat_dire" readonly>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Distrito</mat-label>
+                                            <input matInput formControlName="pat_ubg_dst" id="pat_ubg_dst" readonly>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Altitud (msnm)</mat-label>
+                                            <input matInput formControlName="pat_elevation" id="pat_elevation" readonly>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Estación de atención</mat-label>
+                                            <input matInput formControlName="pat_est_salud" id="pat_est_salud" readonly>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Historia clínica</mat-label>
+                                            <input matInput formControlName="pat_his_cli" id="pat_his_cli" readonly>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                            <input matInput formControlName="pat_hem_wo_dsct" id="pat_hem_wo_dsct" readonly>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Hemogrobina con descuento (HCD)</mat-label>
+                                            <input matInput formControlName="pat_hem_wi_dsct" id="pat_hem_wi_dsct" readonly>
+                                        </mat-form-field>                                        
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button [disabled]="!resumeForm.valid" mat-raised-button matStepperNext
+                                            type="button" color="accent">
+                                            Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step editable="false" *ngIf="currentTracing.schedule_order === '1'" [stepControl]="tracing1Form">
+
+                                <form fxLayout="column" [formGroup]="tracing1Form">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">assignment</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Registro del seguimiento</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Inicio de tratamiento</mat-label>
+                                            <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                                readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Segunda entrega</mat-label>
+                                            <input matInput [matDatepicker]="pickerNextTracing" required
+                                                (click)="pickerNextTracing.open()" formControlName="trc_next_tracing">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Número de muestra</mat-label>
+                                            <input matInput formControlName="trc_num_mue" id="trc_num_mue" readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Fecha de muestra</mat-label>
+                                            <input matInput [matDatepicker]="pickerFecMue" [max]="maxDateFecNac"
+                                                required (click)="pickerFecMue.open()" formControlName="trc_fec_mue">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerFecMue">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerFecMue startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha de muestra es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hematocrito (Hcto)</mat-label>
+                                            <input matInput formControlName="trc_hem" id="trc_hem" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                            <input matInput formControlName="trc_hsd" id="trc_hsd"
+                                                (input)="calculateHCD($event)" (change)="calculateHCD($event)" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="trc_med_id" required>
+                                                <mat-option *ngFor="let option of listProductAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                            <input (input)="validateHSD($event.target.value)" matInput
+                                                formControlName="trc_hcd" id="trc_hcd" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_tol_trt">
+                                            Tolerancia
+                                            al medicamento</mat-slide-toggle>
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_vst_med">Visita
+                                            domiciliaria del personal de salud</mat-slide-toggle>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Estado de anemia</mat-label>
+                                            <input matInput formControlName="trc_state" id="trc_state" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea matInput formControlName="trc_obvs" id="trc_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button [disabled]="!tracing1Form.valid" mat-raised-button
+                                            (click)="registryTracing()" type="button" color="accent">
+                                            Finalizar<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step editable="false" *ngIf="currentTracing.schedule_order === '2'" [stepControl]="tracing2Form">
+
+                                <form fxLayout="column" [formGroup]="tracing2Form">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">assignment</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Registro del seguimiento</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Inicio de tratamiento</mat-label>
+                                            <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                                readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Tercera entrega</mat-label>
+                                            <input matInput [matDatepicker]="pickerNextTracing" required
+                                                (click)="pickerNextTracing.open()" formControlName="trc_next_tracing">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="trc_med_id" required>
+                                                <mat-option *ngFor="let option of listProductAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_tol_trt">
+                                            Tolerancia
+                                            al medicamento</mat-slide-toggle>
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_vst_med">Visita
+                                            domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea matInput formControlName="trc_obvs" id="trc_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button [disabled]="!tracing2Form.valid" mat-raised-button
+                                            (click)="registryTracing()" type="button" color="accent">
+                                            Finalizar<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step editable="false" *ngIf="currentTracing.schedule_order === '3'" [stepControl]="tracing3Form">
+
+                                <form fxLayout="column" [formGroup]="tracing3Form">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">assignment</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Registro del seguimiento</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Inicio de tratamiento</mat-label>
+                                            <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                                readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Cuarta entrega</mat-label>
+                                            <input matInput [matDatepicker]="pickerNextTracing" required
+                                                (click)="pickerNextTracing.open()" formControlName="trc_next_tracing">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Número de muestra</mat-label>
+                                            <input matInput formControlName="trc_num_mue" id="trc_num_mue" readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Fecha de muestra</mat-label>
+                                            <input matInput [matDatepicker]="pickerFecMue" [max]="maxDateFecNac"
+                                                required (click)="pickerFecMue.open()" formControlName="trc_fec_mue">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerFecMue">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerFecMue startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha de muestra es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hematocrito (Hcto)</mat-label>
+                                            <input matInput formControlName="trc_hem" id="trc_hem" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                            <input matInput formControlName="trc_hsd" id="trc_hsd"
+                                                (input)="calculateHCD($event)" (change)="calculateHCD($event)" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="trc_med_id" required>
+                                                <mat-option *ngFor="let option of listProductAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                            <input (input)="validateHSD($event.target.value)" matInput
+                                                formControlName="trc_hcd" id="trc_hcd" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_tol_trt">
+                                            Tolerancia
+                                            al medicamento</mat-slide-toggle>
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_vst_med">Visita
+                                            domiciliaria del personal de salud</mat-slide-toggle>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Estado de anemia</mat-label>
+                                            <input matInput formControlName="trc_state" id="trc_state" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" class="w-50-p">
+                                            <mat-label>Estado de paciente</mat-label>
+                                            <mat-select id="trc_ane_state" formControlName="trc_ane_state">
+                                                <mat-option *ngFor="let option of listAnemState"
+                                                    [value]="option.ane_option">
+                                                    {{option.ane_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea matInput formControlName="trc_obvs" id="trc_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button [disabled]="!tracing3Form.valid" mat-raised-button
+                                            (click)="registryTracing()" type="button" color="accent">
+                                            Finalizar<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step editable="false" *ngIf="currentTracing.schedule_order === '4'" [stepControl]="tracing4Form">
+
+                                <form fxLayout="column" [formGroup]="tracing4Form">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">assignment</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Registro del seguimiento</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Inicio de tratamiento</mat-label>
+                                            <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                                readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Quinta entrega</mat-label>
+                                            <input matInput [matDatepicker]="pickerNextTracing" required
+                                                (click)="pickerNextTracing.open()" formControlName="trc_next_tracing">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="trc_med_id" required>
+                                                <mat-option *ngFor="let option of listProductAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_tol_trt">
+                                            Tolerancia
+                                            al medicamento</mat-slide-toggle>
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_vst_med">Visita
+                                            domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea matInput formControlName="trc_obvs" id="trc_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button [disabled]="!tracing4Form.valid" mat-raised-button
+                                            (click)="registryTracing()" type="button" color="accent">
+                                            Finalizar<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step editable="false" *ngIf="currentTracing.schedule_order === '5'" [stepControl]="tracing5Form">
+
+                                <form fxLayout="column" [formGroup]="tracing5Form">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">assignment</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Registro del seguimiento</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Inicio de tratamiento</mat-label>
+                                            <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                                readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Sexta entrega</mat-label>
+                                            <input matInput [matDatepicker]="pickerNextTracing" required
+                                                (click)="pickerNextTracing.open()" formControlName="trc_next_tracing">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha siguiente de entrega es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="trc_med_id" required>
+                                                <mat-option *ngFor="let option of listProductAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_tol_trt">
+                                            Tolerancia
+                                            al medicamento</mat-slide-toggle>
+                                        <mat-slide-toggle fxFlex="25" class="pr-4" formControlName="trc_vst_med">Visita
+                                            domiciliaria del personal de salud</mat-slide-toggle>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea matInput formControlName="trc_obvs" id="trc_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button [disabled]="!tracing5Form.valid" mat-raised-button
+                                            (click)="registryTracing()" type="button" color="accent">
+                                            Finalizar<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step editable="false" *ngIf="currentTracing.schedule_order === '6'" [stepControl]="tracing6Form">
+
+                                <form fxLayout="column" [formGroup]="tracing6Form">
+
+                                    <ng-template matStepLabel>
+                                        <mat-icon matSuffix class="secondary-text">assignment</mat-icon>
+                                    </ng-template>
+                                    <div class="h2 mb-24">Registro del seguimiento</div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Inicio de tratamiento</mat-label>
+                                            <input matInput formControlName="trc_fec_ini_trt" id="trc_fec_ini_trt"
+                                                readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Fin de tratamiento</mat-label>
+                                            <input matInput [matDatepicker]="pickerNextTracing" required
+                                                (click)="pickerNextTracing.open()" formControlName="trc_fec_fin_trt">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerNextTracing">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerNextTracing startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha fin de tratamiento es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Número de muestra</mat-label>
+                                            <input matInput formControlName="trc_num_mue" id="trc_num_mue" readonly>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="25" class="pr-4">
+                                            <mat-label>Fecha de muestra</mat-label>
+                                            <input matInput [matDatepicker]="pickerFecMue" [max]="maxDateFecNac"
+                                                required (click)="pickerFecMue.open()" formControlName="trc_fec_mue">
+                                            <mat-datepicker-toggle matSuffix [for]="pickerFecMue">
+                                            </mat-datepicker-toggle>
+                                            <mat-datepicker #pickerFecMue startView="multi-year"></mat-datepicker>
+                                            <mat-error>La fecha de muestra es requerida.</mat-error>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hematocrito (Hcto)</mat-label>
+                                            <input matInput formControlName="trc_hem" id="trc_hem" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hemoglobina sin descuento (HSD)</mat-label>
+                                            <input matInput formControlName="trc_hsd" id="trc_hsd"
+                                                (input)="calculateHCD($event)" (change)="calculateHCD($event)" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Medicamento</mat-label>
+                                            <mat-select id="pat_adm_id" formControlName="trc_med_id" required>
+                                                <mat-option *ngFor="let option of listProductAdm"
+                                                    [value]="option.pat_adm_id">
+                                                    {{option.pat_adm_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Hemoglobina con descuento (HCD)</mat-label>
+                                            <input (input)="validateHSD($event.target.value)" matInput
+                                                formControlName="trc_hcd" id="trc_hcd" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Estación de atención</mat-label>
+                                            <input matInput formControlName="trc_est_ate" id="trc_est_ate" required>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Estado de anemia</mat-label>
+                                            <input matInput formControlName="trc_state" id="trc_state" required>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                        <mat-form-field appearance="outline" class="w-50-p">
+                                            <mat-label>Estado de paciente</mat-label>
+                                            <mat-select id="trc_ane_state" formControlName="trc_ane_state">
+                                                <mat-option *ngFor="let option of listAnemState"
+                                                    [value]="option.ane_option">
+                                                    {{option.ane_desc}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                            <mat-label>Observaciones</mat-label>
+                                            <textarea matInput formControlName="trc_obvs" id="trc_obvs"></textarea>
+                                        </mat-form-field>
+
+                                    </div>
+
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <button class="mr-8" mat-raised-button matStepperPrevious type="button"
+                                            color="accent">
+                                            <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                        </button>
+                                        <button [disabled]="!tracing6Form.valid" mat-raised-button
+                                            (click)="registryTracing()" type="button" color="accent">
+                                            Finalizar<mat-icon matSuffix>navigate_next</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </mat-step>
+
+                            <mat-step>
+
+                                <ng-template matStepLabel>
+                                    <mat-icon matSuffix class="secondary-text">check_circle_outline</mat-icon>
+                                </ng-template>
+
+                                <div class="h2 m-16" fxLayout="row" fxLayoutAlign="center center">
+                                    El seguimiento de {{patient.pat_basic_info.pat_names}} se registro exitosamente.
+                                </div>
+
+                                <div fxLayout="row" fxLayoutAlign="center center">
+                                    <button mat-raised-button type="button" color="accent" (click)="finalizeRegistry()">
+                                        Finalizar&nbsp;<mat-icon matSuffix>check_circle</mat-icon>
+                                    </button>
+                                </div>
+
+                            </mat-step>
+
+                        </mat-horizontal-stepper>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

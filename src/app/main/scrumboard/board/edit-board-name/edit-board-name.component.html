@@ -1,0 +1,17 @@
+<div *ngIf="!formActive" class="board-name" fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
+    <span>{{board.name}}</span>
+</div>
+
+
+<form [formGroup]="form" (ngSubmit)="onFormSubmit()"
+      class="board-name-form" fxLayout="row" fxFlex="1 0 auto" *ngIf="formActive">
+
+    <input formControlName="name" #nameInput fxFlex="1 0 auto" placeholder="Write a board name">
+
+    <button mat-icon-button fxFlex="0 1 auto">
+        <mat-icon>check</mat-icon>
+    </button>
+    <button mat-icon-button fxFlex="0 1 auto" (click)="closeForm()" type="button">
+        <mat-icon>close</mat-icon>
+    </button>
+</form>

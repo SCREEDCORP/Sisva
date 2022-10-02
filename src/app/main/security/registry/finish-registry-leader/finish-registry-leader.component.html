@@ -1,0 +1,51 @@
+<div id="mail-confirm" fxLayout="column">
+
+    <div  id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+
+        <div style="background-color: white !important;" id="mail-confirm-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+
+            <div class="logo">
+                <mat-icon class="mat-accent s-96">supervisor_account</mat-icon>
+            </div>
+
+            <div class="title">Activación de cuenta</div>
+
+            <div class="subtitle">
+                <p>
+                    Hola, para continuar con el registro un ejecutivo de ventas se comunicará contigo.
+                </p>
+
+                <p>
+                    Por favor ingresa tú numero de contácto:
+                </p>
+
+                <form name="registerForm" [formGroup]="registerForm" novalidate>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Número de cotacto</mat-label>
+                        <input matInput formControlName="user_phone" required [readonly]="user_phone_readonly">
+                        <mat-icon matSuffix class="secondary-text">contact_phone</mat-icon>
+                        <mat-error>
+                            La información es requerida.
+                        </mat-error>
+                    </mat-form-field>
+    
+                    <button *ngIf="showConfirm" mat-raised-button color="accent" class="submit-button" aria-label="Confirmar" (click)="contactUser()"
+                            [disabled]="registerForm.invalid">
+                        Confirmar
+                    </button>
+    
+                </form>
+
+            </div>
+
+            <div class="message">
+                <a class="link" [routerLink]="'/security/login'">Volver a la página para ingresar</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

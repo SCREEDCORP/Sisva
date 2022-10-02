@@ -1,0 +1,43 @@
+<div id="mail-confirm" fxLayout="column">
+
+    <div  id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+
+        <div style="background-color: white !important;" id="mail-confirm-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+
+            <div class="logo">
+                <mat-icon class="mat-accent s-96">person_pin</mat-icon>
+            </div>
+            
+            <div class="title">Activación de cuenta</div>
+
+            <div *ngIf="registry">
+                <div class="subtitle">
+                    <p>
+                        Hola {{user.user_pers_info.user_names}}, tu cuenta ya fue creada y solo falta que el encargado de tu organización active la cuenta.
+                    </p>
+                    <p>
+                        Un correo electrónico fue enviado al correo <strong>{{user.user_mail_leader}}</strong> notificando tu soliicitud de activación.
+                    </p>
+                </div>
+            </div>
+
+            <div *ngIf="!registry">
+                <div class="subtitle">
+                    <p>
+                        Hola {{user.user_pers_info.user_names}}, por alguna razón no se notificó correctamente tu solicitud de activación.
+                    </p>
+                    <p>
+                        Por favor comunicate con tu encargado <strong>{{user.user_mail_leader}}</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="message">
+                <a class="link" [routerLink]="'/security/login'">Volver a la página para ingresar</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,324 @@
+<div id="mail-confirm" fxLayout="column">
+
+    <div id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+
+        <div style="background-color: white !important;" id="mail-confirm-form"
+            [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+
+            <div class="horizontal-stepper-wrapper">
+
+                <!-- HORIZONTAL STEPPER EXAMPLE -->
+                <mat-horizontal-stepper #stepper [linear]="true" class="no-header-event">
+
+                    <mat-step editable="false" [stepControl]="loginForm">
+
+                        <form fxLayout="column" [formGroup]="loginForm">
+
+                            <ng-template matStepLabel>
+                                <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                            </ng-template>
+
+
+                            <div class="logo">
+                                <mat-icon class="mat-accent s-96">supervisor_account</mat-icon>
+                            </div>
+
+                            <div class="title">Activación de cuenta</div>
+
+                            <div class="subtitle">
+                                <p>
+                                    Hola <b>{{user.user_pers_info.user_names}}</b>, para continuar con la activación,
+                                    por favor ingresa tu
+                                    contraseña.
+                                </p>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Contraseña</mat-label>
+                                    <input type="password" matInput formControlName="user_password" required
+                                        (keypress)="keyPressLoginForm($event)">
+                                    <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+                                    <mat-error>
+                                        La información es requerida.
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="center center">
+                                <button id="btnFormBasicNext" [disabled]="!loginForm.valid" mat-raised-button
+                                    (click)="loginActivation()" type="button" color="accent">
+                                    Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </mat-step>
+
+                    <mat-step editable="false" [stepControl]="organizationForm">
+
+                        <form fxLayout="column" [formGroup]="organizationForm">
+
+                            <ng-template matStepLabel>
+                                <mat-icon matSuffix class="secondary-text">location_city</mat-icon>
+                            </ng-template>
+
+                            <div class="h2 mb-24">Información organizacional</div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="100" class="pr-4">
+                                    <mat-label class="user-apellidos">Nombre de la organización</mat-label>
+                                    <input matInput formControlName="orgz_name" id="orgz_name" required>
+                                    <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                    <mat-error>El nombre de la organización es requerida.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Departamento</mat-label>
+                                    <mat-select (selectionChange)="loadUbigeoPrv($event.value)"
+                                        formControlName="orgz_ugb_dpt_id" required>
+                                        <mat-option *ngFor="let dpt of listUbigeoDpt" [value]="dpt.ubg_dpt">
+                                            {{dpt.ubg_dsc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El departamento es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Provincia</mat-label>
+                                    <mat-select (selectionChange)="loadUbigeoDst($event.value)"
+                                        formControlName="orgz_ugb_prv_id" required>
+                                        <mat-option *ngFor="let prv of listUbigeoPrv" [value]="prv.ubg_prv">
+                                            {{prv.ubg_dsc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>La provincia es requerida.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Distrito</mat-label>
+                                    <mat-select (selectionChange)="changeShowLocationMap()" formControlName="orgz_ugb_dst_id" required>
+                                        <mat-option *ngFor="let dst of listUbigeoDst" [value]="dst.ubg_dst">
+                                            {{dst.ubg_dsc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El distrito es requerido.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div *ngIf="showLocationMap" fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                    <mat-label class="user-apellidos">Latitud</mat-label>
+                                    <input (change)="getElevation()" matInput formControlName="orgz_latitude" required>
+                                    <mat-error>Ingresar una latitud correcta.</mat-error>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                    <mat-label class="user-apellidos">Longitud</mat-label>
+                                    <input (change)="getElevation()" matInput formControlName="orgz_longitude" required>
+                                    <mat-error>Ingresar una longitud correcta.</mat-error>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" fxFlex="33" class="pr-4">
+                                    <mat-label class="user-apellidos">Altitud (msnm)</mat-label>
+                                    <input matInput formControlName="orgz_elevation" required>
+                                    <mat-error>La altitud es requerida.</mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div *ngIf="showLocationMap" fxLayout="row" fxLayoutAlign="center center"
+                                style="margin-bottom: 25px;">
+                                <button (click)="actionGetLocation()" class="mr-8" mat-raised-button type="button"
+                                    color="accent">
+                                    <mat-icon matSuffix>location_on</mat-icon>Solicitar ubicación
+                                </button>
+                            </div>
+
+                            <agm-map *ngIf="showMapa && showLocationMap" (mapClick)="mapClicked($event)"
+                                [latitude]="organizationForm.value.orgz_latitude"
+                                [longitude]="organizationForm.value.orgz_longitude" style="margin-bottom: 25px;">
+                                <agm-marker [latitude]="organizationForm.value.orgz_latitude"
+                                    [longitude]="organizationForm.value.orgz_longitude"></agm-marker>
+                            </agm-map>
+
+                            <div fxLayout="row" fxLayoutAlign="center center">
+                                <button [disabled]="!organizationForm.valid" mat-raised-button
+                                    (click)="updateDataOrganization()" type="button" color="accent">
+                                    Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </mat-step>
+
+                    <mat-step editable="false" [stepControl]="basicForm">
+
+                        <form fxLayout="column" [formGroup]="basicForm">
+
+                            <ng-template matStepLabel>
+                                <mat-icon matSuffix class="secondary-text">recent_actors</mat-icon>
+                            </ng-template>
+
+                            <div class="h2 mb-24">Información personal</div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Tipo de documento</mat-label>
+                                    <mat-select (selectionChange)="changeMaxLengthDocument($event.value)"
+                                        formControlName="user_tip_doc" required>
+                                        <mat-option *ngFor="let tip of listTipDocument" [value]="tip.tip_doc_id">
+                                            {{tip.tip_doc_name}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El tipo de documento es requerido.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Nro de documento</mat-label>
+                                    <input matInput formControlName="user_num_doc" id="user_num_doc" required>
+                                    <mat-icon matSuffix class="secondary-text">person_pin</mat-icon>
+                                    <mat-error>El número de documento es requerido.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Apellido paterno</mat-label>
+                                    <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                        formControlName="user_ape_pat" id="user_ape_pat" required>
+                                    <mat-error>El apellido paterno.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Apellido Materno</mat-label>
+                                    <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                        formControlName="user_ape_mat" id="user_ape_mat" required>
+                                    <mat-error>El apellido materno.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label>Fec de nacimiento</mat-label>
+                                    <input matInput [matDatepicker]="pickerMedic" [max]="maxDateFecNac"
+                                        (click)="pickerMedic.open()" formControlName="user_fec_nac">
+                                    <mat-datepicker-toggle matSuffix [for]="pickerMedic"></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerMedic startView="multi-year"></mat-datepicker>
+                                    <mat-error>La fecha de nacimiento es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Sexo</mat-label>
+                                    <mat-select formControlName="user_sexo" required>
+                                        <mat-option *ngFor="let sex of listSex" [value]="sex.sex_id">
+                                            {{sex.sex_desc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>El sexo es requerido.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Ocupación</mat-label>
+                                    <mat-select formControlName="user_occupation" required>
+                                        <mat-option *ngFor="let occ of listOccupation" [value]="occ.occ_id">
+                                            {{occ.occ_desc}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error>La ocupación es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Red de salud</mat-label>
+                                    <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                        formControlName="user_red_sal" id="user_red_sal" required>
+                                    <mat-error>La red de salud es requerida.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Microred</mat-label>
+                                    <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                        formControlName="user_mic_red" id="user_mic_red" required>
+                                    <mat-error>La microred es requerida.</mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+                                    <mat-label class="user-apellidos">Puesto o centro de salud</mat-label>
+                                    <input (change)="clearWhiteSpacesMedicForm($event)" matInput
+                                        formControlName="user_pst_sal" id="user_pst_sal" required>
+                                    <mat-error>El puesto de salud es requerida.</mat-error>
+                                </mat-form-field>
+
+                            </div>
+
+                            <div fxLayout="row" fxLayoutAlign="center center">
+                                <button class="mr-8" mat-raised-button matStepperPrevious type="button" color="accent">
+                                    <mat-icon matSuffix>navigate_before</mat-icon>Anterior
+                                </button>
+                                <button id="btnMedicFormNext" [disabled]="!basicForm.valid" mat-raised-button
+                                    (click)="updateDataUserLeader()" type="button" color="accent">
+                                    Siguiente<mat-icon matSuffix>navigate_next</mat-icon>
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </mat-step>
+
+                    <mat-step>
+
+                        <ng-template matStepLabel>
+                            <mat-icon matSuffix class="secondary-text">check_circle_outline</mat-icon>
+                        </ng-template>
+
+                        <div class="logo">
+                            <mat-icon class="mat-accent s-96">supervisor_account</mat-icon>
+                        </div>
+
+                        <div class="h2 m-16" fxLayout="row" fxLayoutAlign="center center">
+                            Felicidades, la cuenta fue activdad satisfactoriamente, ahora puedes comenzar a utilizar el
+                            sistema SISVA.
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center">
+                            <button mat-raised-button type="button" color="accent" (click)="finalizeRegistry()">
+                                Ingresar&nbsp;<mat-icon matSuffix>check_circle</mat-icon>
+                            </button>
+                        </div>
+
+                    </mat-step>
+
+                </mat-horizontal-stepper>
+                <!-- / HORIZONTAL STEPPER EXAMPLE -->
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

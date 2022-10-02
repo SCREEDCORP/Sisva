@@ -1,0 +1,106 @@
+<div id="product" class="page-layout carded fullwidth inner-scroll">
+
+    <div class="top-bg accent"></div>
+
+    <div class="center">
+
+        <div class="header accent" fxLayout="row" fxLayoutAlign="space-between center">
+
+            <div fxLayout="row" fxLayoutAlign="start center">
+
+                <button mat-icon-button class="mr-0 mr-sm-16" [routerLink]="'/orgz/padron'">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <div fxLayout="column" fxLayoutAlign="start start"
+                    [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    <div class="h2" *ngIf="pageType ==='edit'">
+                        {{projection.orgz_proj_date}}
+                    </div>
+                    <div class="h2" *ngIf="pageType ==='new'">
+                        Nueva proyección de padrón nominal
+                    </div>
+                    <div class="subtitle secondary-text" *ngIf="pageType ==='new'">
+                        <span>Información detallada</span>
+                    </div>
+                </div>
+            </div>
+
+            <button mat-raised-button class="save-product-button" [disabled]="projectionForm.invalid"
+                (click)="addProjection()" *ngIf="pageType ==='new'">
+                <span>Guardar</span>
+            </button>
+
+            <button mat-raised-button class="save-product-button" (click)="updateProjection()"
+                [disabled]="projectionForm.invalid || projectionForm.pristine" *ngIf="pageType ==='edit'">
+                <span>Actualizar</span>
+            </button>
+        </div>
+
+        <div class="content-card">
+
+            <div class="content">
+
+                <form name="patientForm" [formGroup]="projectionForm" class="product w-100-p" fxLayout="column" fxFlex>
+
+                    <div class="tab-content p-24" fusePerfectScrollbar>
+
+                        <div class="mb-24" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+
+                            <div class="mat-card mat-elevation-z4 p-24 mr-24" fxLayout="column" fxLayoutAlign="start"
+                                fxFlex="1 0 auto" name="form">
+
+                                <div class="h2 mb-24">Últimas proyecciones</div>
+
+                                <mat-list>
+                                    <mat-list-item *ngFor="let projection of projections">
+                                        <mat-icon mat-list-icon>calendar_today</mat-icon>
+                                        <p mat-line>{{projection.orgz_proj_date}}</p>
+                                        <p mat-line>{{projection.orgz_proj_number}} pacientes</p>
+                                    </mat-list-item>
+                                </mat-list>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-24" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+
+                            <div class="mat-card mat-elevation-z4 p-24 mr-24" fxLayout="column" fxLayoutAlign="start"
+                                fxFlex="1 0 auto" name="form">
+
+                                <div class="h2 mb-24">Datos de la proyección</div>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-40-p">
+                                    <mat-label>Fecha de proyección</mat-label>
+                                    <input matInput [matDatepicker]="dp" placeholder="Año y mes"
+                                        formControlName="orgz_proj_date">
+                                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                                    <mat-datepicker #dp startView="multi-year"
+                                        (yearSelected)="chosenYearHandler($event)"
+                                        (monthSelected)="chosenMonthHandler($event, dp)"
+                                        panelClass="example-month-picker">
+                                    </mat-datepicker>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-40-p">
+                                    <mat-label>Proyección (número de pacientes)</mat-label>
+                                    <input type="number" matInput formControlName="orgz_proj_number">
+                                </mat-form-field>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

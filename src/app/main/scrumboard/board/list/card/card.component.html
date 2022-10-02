@@ -1,0 +1,96 @@
+<!-- CARD DETAILS -->
+<div class="list-card-details">
+
+    <!-- CARD SORT HANDLE -->
+    <div class="list-card-sort-handle">
+        <mat-icon mat-font-icon="icon-cursor-move" class="icon s16"></mat-icon>
+    </div>
+    <!-- /CARD SORT HANDLE -->
+
+    <!-- CARD NAME -->
+    <div class="list-card-name">{{card.patient.pat_basic_info.pat_names}} {{card.patient.pat_basic_info.pat_ape_pat}}
+    </div>
+    <!-- / CARD NAME -->
+
+    <div *ngIf="card.due || card.checkItems" class="list-card-badges" fxLayout="row" fxLayoutAlign="start center">
+
+        <!-- CARD DUE -->
+        <span class="badge due-date" [ngClass]="'schedule_due_' + isOverdue(card.due)" *ngIf="card.due" fxLayout="row"
+            fxLayoutAlign="start center">
+            <mat-icon class="s-16">access_time</mat-icon>
+            <span>{{card.due | date:'mediumDate'}}</span>
+
+        </span>
+        <!-- / CARD DUE -->
+
+        <!-- CARD CHECK ITEMS STATUS -->
+        <span *ngIf="card.checkItems" class="badge check-items"
+            [ngClass]="{'completed': card.checkItemsChecked === card.checkItems}" fxLayout="row"
+            fxLayoutAlign="start center">
+            <mat-icon class="s-16">check_circle</mat-icon>
+            <span>{{card.checkItemsChecked}}</span>
+            <span>/</span>
+            <span>{{card.checkItems}}</span>
+        </span>
+        <!-- / CARD CHECK ITEMS STATUS -->
+
+    </div>
+
+    <!-- CARD MEMBERS -->
+    <div *ngIf="card.idMembers.length > 0" class="list-card-members" fxLayout="row">
+
+        <div class="list-card-member" *ngFor="let memberId of card.idMembers">
+
+            <img class="list-card-member-avatar" alt="image" [src]="board.members | getById:memberId:'avatar'"
+                [matTooltip]="board.members | getById:memberId:'name'">
+        </div>
+
+    </div>
+    <!-- / CARD MEMBERS -->
+
+</div>
+<!-- / CARD DETAILS -->
+
+<!-- CARD FOOTER -->
+<div class="list-card-footer" fxLayout="row" fxLayoutAlign="space-between center">
+
+    <div fxLayout="row" fxLayoutAlign="start center">
+
+        <!-- CARD DETAILS -->
+        <span *ngIf="card.description !== ''" class="list-card-footer-item" fxLayout="row" fxLayoutAlign="start center">
+            <mat-icon class="s-18">description</mat-icon>
+        </span>
+        <!-- / CARD DETAILS -->
+
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start center">
+        <mat-chip-list>
+            <mat-chip *ngIf="toNumber(card.patient.pat_medic_info.pat_hcd) >= 11.6"
+                style="background-color: green !important;" selected>Normal</mat-chip>
+            <mat-chip
+                *ngIf="toNumber(card.patient.pat_medic_info.pat_hcd) < 11.6 && toNumber(card.patient.pat_medic_info.pat_hcd) >= 11"
+                style="background-color: yellow !important; color: black;" selected>En riesgo</mat-chip>
+            <mat-chip
+                *ngIf="toNumber(card.patient.pat_medic_info.pat_hcd) < 11 && toNumber(card.patient.pat_medic_info.pat_hcd) >= 9.99"
+                style="background-color: orange !important;" selected>Anemia Leve</mat-chip>
+            <mat-chip
+                *ngIf="toNumber(card.patient.pat_medic_info.pat_hcd) < 9.99 && toNumber(card.patient.pat_medic_info.pat_hcd) >= 7.01"
+                style="background-color: orangered !important;" selected>Anemia Moderada</mat-chip>
+            <mat-chip *ngIf="toNumber(card.patient.pat_medic_info.pat_hcd) < 7.01"
+                style="background-color: red !important;" selected>Anemia Severa</mat-chip>
+        </mat-chip-list>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="end center">
+
+        <!-- CARD COMMENTS -->
+        <span *ngIf="card.comments" class="list-card-footer-item" fxLayout="row" fxLayoutAlign="start center">
+            <mat-icon class="s-18">comment</mat-icon>
+            <span class="value">{{card.comments.length}}</span>
+        </span>
+        <!-- / CARD COMMENTS -->
+
+    </div>
+</div>
+<!-- CARD FOOTER -->
